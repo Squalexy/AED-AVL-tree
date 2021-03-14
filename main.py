@@ -135,23 +135,35 @@ def rebalance(node, num_utente):
 tree = AVLTree()
 root = None
 
-tik = perf_counter()
+total_time = 0
+
 while True:
+
     try:
+
         inputs = [i for i in input().split()]
+
         if inputs[0].lower() == "acrescenta":
+            tik = perf_counter()
             root = tree.insert(root, int(inputs[1]), inputs[2], inputs[3])
+            tok = perf_counter()
+            total_time += tok-tik
+
         elif inputs[0].lower() == "consulta":
+            tik = perf_counter()
             if not tree.consult(root, int(inputs[1])): print("NÃO ENCONTRADO")
+            tok = perf_counter()
+            total_time += tok - tik
+
         elif inputs[0].lower() == "lista":
             tree.listing(root)
             print("FIM")
+
         elif inputs[0].lower() == "apaga":
             tree.delete_tree(root)
             root = None
             print("LISTAGEM DE NOMES VAZIA")
+
     except EOFError:
-        tok = perf_counter()
-        tempo_execucao = tok - tik
-        print(tempo_execucao)
+        print(total_time)
         break
