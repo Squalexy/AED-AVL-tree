@@ -41,18 +41,25 @@ class AVLTree:
                     flag = 0
             if flag == 1:
                 node.vaccines.append(Vaccine(vaccine_input, date_input))
-                print("NOVA VACINA CRIADA")
+                print("NOVA VACINA INSERIDA")
 
         node.h = 1 + max(get_h(node.left), get_h(node.right))  # update altura do nó pai
         return rebalance(node, num_utente)  # equilibra a árvore, se necessário
 
     def listing(self, node):
 
+        count = 0
         if not node:
             return
         self.listing(node.left)
+
         for vac in sorted(node.vaccines, key=lambda x: x.vaccine):
-            print(f"{node.num_utente} {vac.vaccine} {vac.date}")
+            if count == 0:
+                print(f"{node.num_utente}", end="")
+                count += 1
+            print(f" {vac.vaccine} {vac.date}", end="")
+        print()
+
         self.listing(node.right)
 
     def consult(self, node, num_utente):
@@ -91,6 +98,7 @@ def get_fe(node):  # devolve o fator de equilíbrio do nó
 
 
 def left_rotation(root_node):
+    
     new_root_node = root_node.right
     undock_node = new_root_node.left  # o nó que vai desencaixar está à esquerda do nó filho direito do nó principal
 
@@ -104,6 +112,7 @@ def left_rotation(root_node):
 
 
 def right_rotation(root_node):
+
     new_root_node = root_node.left
     undock_node = new_root_node.right
 
@@ -117,6 +126,7 @@ def right_rotation(root_node):
 
 
 def rebalance(node, num_utente):
+
     if get_fe(node) > 1 and num_utente < node.left.num_utente:  # Esquerda predominante
         return right_rotation(node)
     if get_fe(node) > 1 and num_utente > node.left.num_utente:  # Esquerda + subdireita predominante
@@ -139,31 +149,28 @@ total_time = 0
 
 while True:
 
-    try:
+    inputs = [i for i in input().split()]
 
-        inputs = [i for i in input().split()]
+    if inputs[0].lower() == "acrescenta":
+        tik = perf_counter()
+        root = tree.insert(root, int(inputs[1]), inputs[2], inputs[3])
+        tok = perf_counter()
+        total_time += tok - tik
 
-        if inputs[0].lower() == "acrescenta":
-            tik = perf_counter()
-            root = tree.insert(root, int(inputs[1]), inputs[2], inputs[3])
-            tok = perf_counter()
-            total_time += tok-tik
+    elif inputs[0].lower() == "consulta":
+        tik = perf_counter()
+        if not tree.consult(root, int(inputs[1])): print("NÃO ENCONTRADO")
+        tok = perf_counter()
+        total_time += tok - tik
 
-        elif inputs[0].lower() == "consulta":
-            tik = perf_counter()
-            if not tree.consult(root, int(inputs[1])): print("NÃO ENCONTRADO")
-            tok = perf_counter()
-            total_time += tok - tik
+    elif inputs[0].lower() == "lista":
+        tree.listing(root)
 
-        elif inputs[0].lower() == "lista":
-            tree.listing(root)
-            print("FIM")
-
-        elif inputs[0].lower() == "apaga":
-            tree.delete_tree(root)
-            root = None
-            print("LISTAGEM DE NOMES VAZIA")
-
-    except EOFError:
+    elif inputs[0].lower() == "apaga":
+        tree.delete_tree(root)
+        root = None
+        print("LISTAGEM DE NOMES VAZIA")
+    elif inputs[0].lower() == "fim":
         print(total_time)
         break
+

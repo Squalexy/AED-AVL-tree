@@ -9,11 +9,10 @@ for i in range(20):
     utentes.append(random.randint(0, 1000))
 
 for i in range(30):
-    dia = str(random.randint(0, 31))
-    mes = str(random.randint(0, 12))
+    dia = str(random.randint(0, 31)).zfill(2)
+    mes = str(random.randint(0, 12)).zfill(2)
     ano = str(random.randint(2020, 2030))
-    data = dia + "/" + mes + "/" + ano
-    datas.append(data)
+    datas.append(dia + mes + ano)
 
 
 def generate_10ins_90con(num):
